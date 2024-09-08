@@ -1,0 +1,50 @@
+version: "3.7"
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx_app
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - "./nginx/nginx.conf:/etc/nginx/nginx.conf"
+    depends_on:
+      - ozinshe_app
+    networks:
+      - ozinshe_net
+
+  db:
+    image: postgres:16
+    container_name: postgres_app
+    restart: always
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=ozinshe
+    networks:
+      - ozinshe_net
+    volumes:
+      - ozinshe_data:/var/lib/postgresql/data
+      - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  ozinshe_app:
+    build:
+      context: .
+    container_name: ozinshe_app
+    command: go run cmd/main.go
+    restart: always
+    expose:
+      - 8000
+    networks:
+      - ozinshe_net
+    depends_on:
+      - db
+
+volumes:
+  ozinshe_data:
+
+networks:
+  ozinshe_net:
+  
