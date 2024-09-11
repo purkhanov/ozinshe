@@ -1,10 +1,11 @@
 package handler
 
 import (
-	"net/http"
 	"ozinshe/pkg/service"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Handler struct {
@@ -22,18 +23,16 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	router.Static("/images", "./data/images")
 	router.Static("/screenshots", "./data/screenshots")
 
-	router.GET("/ping", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, map[string]string{"pong": "pong"})
-	})
-
-	auth := router.Group("/auth")
-	{
-		auth.POST("/sign-up", h.signUp)
-		auth.POST("/sign-in", h.signIn)
-	}
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	apiV1 := router.Group("/api/v1")
 	{
+		auth := apiV1.Group("/auth")
+		{
+			auth.POST("/sign-up", h.signUp)
+			auth.POST("/sign-in", h.signIn)
+		}
+
 		movies := apiV1.Group("/movies")
 		{
 			movies.GET("/", h.getMovies)

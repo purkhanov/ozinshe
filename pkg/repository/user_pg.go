@@ -68,29 +68,23 @@ func (r *UserPostgres) GetUser(userId int) (schemas.User, error) {
 	return user, nil
 }
 
-func (r *UserPostgres) UpdateUser(userId int, input schemas.UpdateUserInput) error {
-	updateUserMap := input.ToMap()
-
-	if len(updateUserMap) == 0 {
+func (r *UserPostgres) UpdateUser(userId int, input map[string]any) error {
+	if len(input) == 0 {
 		return nil
 	}
 
-	setValues := make([]string, 0)
+	setKeysVal := make([]string, 0)
 	args := make([]any, 0)
 	argId := 1
 
-	for key, val := range updateUserMap {
-		if val == "" {
-			continue
-		}
-
+	for key, val := range input {
 		sv := fmt.Sprintf("%s=$%d", key, argId)
-		setValues = append(setValues, sv)
+		setKeysVal = append(setKeysVal, sv)
 		args = append(args, val)
 		argId++
 	}
 
-	setQuery := strings.Join(setValues, ", ")
+	setQuery := strings.Join(setKeysVal, ", ")
 	query := fmt.Sprintf(
 		"UPDATE %s SET %s WHERE id = $%d",
 		usersTable, setQuery, argId,

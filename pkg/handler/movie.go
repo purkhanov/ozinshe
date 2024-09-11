@@ -10,6 +10,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @Summary Get movies
+// @Tags movie
+// @Accept json
+// @Produce json
+// @Param search query string false "найдет фильм по имени если не указан найдет все"
+// @Param genre query string false "найдет фильм по жанру если не указан найдет все"
+// @Param page_num query int false "номер страницы по умолчнию 1"
+// @Param per_page query int false "количество фильмов в одном ответе по умолчанию 20"
+// @Success 200 {object} schemas.SwaggerPaginMovieResponse "Successful"
+// @Failure 400 {string} Invalid input
+// @Router /movies [get]
 func (h *Handler) getMovies(c *gin.Context) {
 	movieNmae := c.Query("search")
 	if movieNmae != "" {
@@ -74,6 +85,14 @@ func (h *Handler) searchByGenre(c *gin.Context) {
 	c.JSON(http.StatusOK, movies)
 }
 
+// @Summary Get movie by ID
+// @Tags movie
+// @Accept json
+// @Produce json
+// @Param id path int true "Movie ID"
+// @Success 200 {object} schemas.SwaggerMovieResponse "Successful"
+// @Failure 400 {string} Invalid input
+// @Router /movies/{id} [get]
 func (h *Handler) getMovieById(c *gin.Context) {
 	movieId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -88,6 +107,15 @@ func (h *Handler) getMovieById(c *gin.Context) {
 	c.JSON(http.StatusOK, movie)
 }
 
+// @Summary Add movie
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param request body schemas.AddMovieInfo true "body json"
+// @Success 201 {string} Successful
+// @Failure 400 {string} Invalid input
+// @Security ApiKeyAuth
+// @Router /admin/movies [post]
 func (h *Handler) addMovieInfo(c *gin.Context) {
 	var movieInfo schemas.AddMovieInfo
 
@@ -105,6 +133,17 @@ func (h *Handler) addMovieInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]int{"id": id})
 }
 
+// @Summary Upload movie
+// @Tags admin
+// @Accept multipart/form-data
+// @Produce json
+// @Param id path int true "Movie ID"
+// @Param file formData file true "Movie file"
+// @Success 201 {string} Successful
+// @Failure 400 {string} Invalid input
+// @Failure 500 {string} Server error
+// @Security ApiKeyAuth
+// @Router /admin/movies/{id} [post]
 func (h *Handler) uploadMovie(c *gin.Context) {
 	movieId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -134,6 +173,16 @@ func (h *Handler) uploadMovie(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]int{"id": movieId})
 }
 
+// @Summary Get movie screenshots
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param id path int true "Movie ID"
+// @Success 200 {object} schemas.Screenshot "Successful"
+// @Failure 400 {string} Invalid input
+// @Failure 500 {string} Server error
+// @Security ApiKeyAuth
+// @Router /movies/screenshots/{id} [get]
 func (h *Handler) getScreenshots(c *gin.Context) {
 	movieId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -150,6 +199,17 @@ func (h *Handler) getScreenshots(c *gin.Context) {
 	c.JSON(http.StatusOK, screens)
 }
 
+// @Summary Upload screenshot
+// @Tags admin
+// @Accept multipart/form-data
+// @Produce json
+// @Param id path int true "Movie ID"
+// @Param file formData file true "Movie screenshot"
+// @Success 201 {string} Successful
+// @Failure 400 {string} Invalid input
+// @Failure 500 {string} Server error
+// @Security ApiKeyAuth
+// @Router /admin/screenshots/{id} [post]
 func (h *Handler) uploadScreenshot(c *gin.Context) {
 	movieId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -185,6 +245,15 @@ func (h *Handler) uploadScreenshot(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]int{"id": id})
 }
 
+// @Summary Update movie
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param request body schemas.UpdateMovieInfo true "body json"
+// @Success 201 {string} Successful
+// @Failure 400 {string} Invalid input
+// @Security ApiKeyAuth
+// @Router /admin/movies [put]
 func (h *Handler) updateMovie(c *gin.Context) {
 	var movieInput schemas.UpdateMovieInfo
 
@@ -207,6 +276,16 @@ func (h *Handler) updateMovie(c *gin.Context) {
 	c.JSON(http.StatusAccepted, statusResponse{Status: "updated"})
 }
 
+// @Summary Delete movie
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param id path int true "Movie ID"
+// @Success 204 {string} Successful
+// @Failure 400 {string} Invalid input
+// @Failure 500 {string} Server error
+// @Security ApiKeyAuth
+// @Router /admin/movie/{id} [delete]
 func (h *Handler) deleteMovie(c *gin.Context) {
 	movieId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -222,6 +301,16 @@ func (h *Handler) deleteMovie(c *gin.Context) {
 	c.JSON(http.StatusNoContent, statusResponse{Status: "deleted"})
 }
 
+// @Summary Delete screenshot
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param id path int true "Screenshot ID"
+// @Success 204 {string} Successful
+// @Failure 400 {string} Invalid input
+// @Failure 500 {string} Server error
+// @Security ApiKeyAuth
+// @Router /admin/screenshots/{id} [delete]
 func (h *Handler) deleteScreenshot(c *gin.Context) {
 	screenIdStr := c.Query("screenshot_id")
 	if screenIdStr == "" {

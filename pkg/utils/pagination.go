@@ -7,6 +7,7 @@ import (
 
 type PaginationMovieResponse struct {
 	Total      int             `json:"total"`
+	PageNUm    int             `json:"page_num"`
 	PerPage    int             `json:"per_page"`
 	Pagination map[string]any  `json:"pagination"`
 	Data       []schemas.Movie `json:"data"`

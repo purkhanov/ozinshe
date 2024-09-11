@@ -15,7 +15,7 @@ type Authorizhation interface {
 type User interface {
 	GetAllUsers() ([]schemas.User, error)
 	GetUser(userId int) (schemas.User, error)
-	UpdateUser(userId int, input schemas.UpdateUserInput) error
+	UpdateUser(userId int, input schemas.UserInput) error
 	DeleteUser(userId int) error
 
 	GetFavoriteMovies(userId int) ([]schemas.Movie, error)

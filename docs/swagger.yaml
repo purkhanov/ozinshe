@@ -1,0 +1,818 @@
+basePath: /api/v1
+definitions:
+  schemas.AddMovieInfo:
+    properties:
+      description:
+        type: string
+      director:
+        type: string
+      genres:
+        items:
+          type: integer
+        type: array
+      name:
+        type: string
+      producer:
+        type: string
+      runtime:
+        type: integer
+      seasons:
+        type: integer
+      series:
+        type: integer
+      stars:
+        type: integer
+      year:
+        type: integer
+    required:
+    - genres
+    - name
+    type: object
+  schemas.Pagination:
+    properties:
+      next:
+        type: string
+      prev:
+        type: string
+    type: object
+  schemas.Screenshot:
+    properties:
+      id:
+        type: integer
+      link:
+        type: string
+      movie_id:
+        type: integer
+    required:
+    - id
+    type: object
+  schemas.SwaggerMovieResponse:
+    properties:
+      description:
+        type: string
+      director:
+        type: string
+      genres:
+        items:
+          type: string
+        type: array
+      id:
+        type: integer
+      image:
+        type: string
+      name:
+        type: string
+      producer:
+        type: string
+      runtime:
+        type: integer
+      screenshots:
+        items:
+          type: string
+        type: array
+      seasons:
+        type: integer
+      series:
+        type: integer
+      similar_movies:
+        items:
+          $ref: '#/definitions/schemas.SwaggerMovieResponse'
+        type: array
+      stars:
+        type: integer
+      video_url:
+        type: string
+      watched_at:
+        type: string
+      year:
+        type: integer
+    required:
+    - name
+    type: object
+  schemas.SwaggerPaginMovieResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/schemas.SwaggerMovieResponse'
+        type: array
+      page_num:
+        type: integer
+      pagination:
+        $ref: '#/definitions/schemas.Pagination'
+      per_page:
+        type: integer
+      total:
+        type: integer
+    type: object
+  schemas.UpdateMovieInfo:
+    properties:
+      description:
+        type: string
+      director:
+        type: string
+      name:
+        type: string
+      producer:
+        type: string
+      runtime:
+        type: integer
+      seasons:
+        type: integer
+      series:
+        type: integer
+      stars:
+        type: integer
+      year:
+        type: integer
+    type: object
+  schemas.UserCreatedSwaggerResponse:
+    properties:
+      id:
+        type: integer
+    type: object
+  schemas.UserInput:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      password:
+        type: string
+      phone_number:
+        type: string
+      year_of_birth:
+        type: string
+    type: object
+  schemas.UserResponse:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      is_admin:
+        type: boolean
+      phone_number:
+        type: string
+      year_of_birth:
+        type: string
+    type: object
+  schemas.UserSignIn:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  schemas.UserTokenSwaggerResponse:
+    properties:
+      token:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Ozinshe
+  version: 1.0.0
+paths:
+  /admin/movie/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Movie ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Delete movie
+      tags:
+      - admin
+  /admin/movies:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body json
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.AddMovieInfo'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Add movie
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: body json
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.UpdateMovieInfo'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Update movie
+      tags:
+      - admin
+  /admin/movies/{id}:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: Movie ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Movie file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Upload movie
+      tags:
+      - admin
+  /admin/screenshots/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Screenshot ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Delete screenshot
+      tags:
+      - admin
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: Movie ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Movie screenshot
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Upload screenshot
+      tags:
+      - admin
+  /admin/users:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful
+          schema:
+            items:
+              $ref: '#/definitions/schemas.UserResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get all users
+      tags:
+      - admin
+  /admin/users/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Delete user
+      tags:
+      - admin
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful
+          schema:
+            $ref: '#/definitions/schemas.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get user
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful
+          schema:
+            $ref: '#/definitions/schemas.UserInput'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Update user
+      tags:
+      - admin
+  /auth/sign-in:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body json
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.UserSignIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful
+          schema:
+            $ref: '#/definitions/schemas.UserTokenSwaggerResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Sign In
+      tags:
+      - auth
+  /auth/sign-up:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body json
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.UserInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successful sign up
+          schema:
+            $ref: '#/definitions/schemas.UserCreatedSwaggerResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Sign Up
+      tags:
+      - auth
+  /movies:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: найдет фильм по имени если не указан найдет все
+        in: query
+        name: search
+        type: string
+      - description: найдет фильм по жанру если не указан найдет все
+        in: query
+        name: genre
+        type: string
+      - description: номер страницы по умолчнию 1
+        in: query
+        name: page_num
+        type: integer
+      - description: количество фильмов в одном ответе по умолчанию 20
+        in: query
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful
+          schema:
+            $ref: '#/definitions/schemas.SwaggerPaginMovieResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Get movies
+      tags:
+      - movie
+  /movies/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Movie ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful
+          schema:
+            $ref: '#/definitions/schemas.SwaggerMovieResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Get movie by ID
+      tags:
+      - movie
+  /movies/screenshots/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Movie ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful
+          schema:
+            $ref: '#/definitions/schemas.Screenshot'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get movie screenshots
+      tags:
+      - admin
+  /user:
+    delete:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Delete user
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful
+          schema:
+            $ref: '#/definitions/schemas.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get user
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: body json
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.UserInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Update user
+      tags:
+      - user
+  /user/favorites:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful
+          schema:
+            $ref: '#/definitions/schemas.SwaggerMovieResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get user favorite movies
+      tags:
+      - user
+  /user/favorites/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Movie ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Delete user favorite movie
+      tags:
+      - user
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Movie ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Add user favorite movie
+      tags:
+      - user
+  /user/watched-movies:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful
+          schema:
+            $ref: '#/definitions/schemas.SwaggerMovieResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get user watched movies
+      tags:
+      - user
+  /user/watched-movies/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Movie ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Delete user watched movie
+      tags:
+      - user
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Movie ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Add user watched movie
+      tags:
+      - user
+schemes:
+- http
+- https
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

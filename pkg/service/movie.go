@@ -32,6 +32,7 @@ func (s *MovieService) GetAll(paginParams *utils.Pagination) (*utils.PaginationM
 
 	res := &utils.PaginationMovieResponse{
 		Total:      paginParams.Total,
+		PageNUm:    paginParams.PageNum,
 		PerPage:    paginParams.PerPage,
 		Pagination: paginParams.Paginate(),
 		Data:       movies,

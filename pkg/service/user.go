@@ -21,11 +21,13 @@ func (s *UserService) GetUser(userId int) (schemas.User, error) {
 	return s.repo.GetUser(userId)
 }
 
-func (s *UserService) UpdateUser(userId int, input schemas.UpdateUserInput) error {
+func (s *UserService) UpdateUser(userId int, input schemas.UserInput) error {
 	if input.Password != nil {
 		*input.Password = generatePasswordHash(*input.Password)
 	}
-	return s.repo.UpdateUser(userId, input)
+
+	inputMap := toMap(input)
+	return s.repo.UpdateUser(userId, inputMap)
 }
 
 func (s *UserService) DeleteUser(userId int) error {
